@@ -1,0 +1,47 @@
+  [1m[35m (476.5ms)[0m  [1m[35mCREATE DATABASE "HealthPalBackEnd_development" ENCODING = 'unicode'[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (410.7ms)[0m  [1m[35mCREATE DATABASE "HealthPalBackEnd_test" ENCODING = 'unicode'[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (34.6ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (5.7ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (5.9ms)[0m  [1m[34mSELECT pg_try_advisory_lock(7029034214836965870)[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (1.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+Migrating to Initial (20190717102244)
+  [1m[35m (5.1ms)[0m  [1m[35mBEGIN[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (14.5ms)[0m  [1m[35mCREATE TABLE "users" ("id" bigserial primary key, "user_name" character varying, "password_digest" character varying, "name" character varying, "dob" timestamp, "height_cm" integer, "gender" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  ↳ db/migrate/20190717102244_initial.rb:4
+  [1m[35m (5.4ms)[0m  [1m[35mCREATE TABLE "weights" ("id" bigserial primary key, "user_id" integer, "weight_kg" float, "weight_units" float, "weight_uom" character varying, "weight_date" timestamp, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  ↳ db/migrate/20190717102244_initial.rb:14
+  [1m[35m (3.7ms)[0m  [1m[35mCREATE TABLE "activity" ("id" bigserial primary key, "detail" character varying, "activity_date" timestamp, "user_id" integer, "activity_type_id" integer, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  ↳ db/migrate/20190717102244_initial.rb:23
+  [1m[35m (3.5ms)[0m  [1m[35mCREATE TABLE "activity_details" ("id" bigserial primary key, "name" character varying, "duration_min" integer, "photo_thumb" character varying, "unit_calories" float, "activity_id" integer, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  ↳ db/migrate/20190717102244_initial.rb:31
+  [1m[35m (7.6ms)[0m  [1m[35mCREATE TABLE "inputs" ("id" bigserial primary key, "detail" character varying, "user_id" integer, "input_date" timestamp, "input_type_id" integer, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  ↳ db/migrate/20190717102244_initial.rb:40
+  [1m[35m (3.6ms)[0m  [1m[35mCREATE TABLE "input_details" ("id" bigserial primary key, "name" character varying, "serving_unit" integer, "serving_qty" integer, "unit_grams" integer, "unit_calories" float, "photo_thumb" character varying, "input_id" integer, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  ↳ db/migrate/20190717102244_initial.rb:48
+  [1m[35m (3.1ms)[0m  [1m[35mCREATE TABLE "activity_types" ("id" bigserial primary key, "detail" character varying, "image" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  ↳ db/migrate/20190717102244_initial.rb:59
+  [1m[35m (5.6ms)[0m  [1m[35mCREATE TABLE "input_types" ("id" bigserial primary key, "detail" character varying, "image" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  ↳ db/migrate/20190717102244_initial.rb:65
+  [1m[36mActiveRecord::SchemaMigration Create (2.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20190717102244"]]
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (0.9ms)[0m  [1m[35mCOMMIT[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[36mActiveRecord::InternalMetadata Load (0.3ms)[0m  [1m[34mSELECT  "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[36mActiveRecord::InternalMetadata Create (1.3ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "development"], ["created_at", "2019-07-17 10:40:11.005648"], ["updated_at", "2019-07-17 10:40:11.005648"]]
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (0.3ms)[0m  [1m[35mCOMMIT[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT pg_advisory_unlock(7029034214836965870)[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ /Users/marcusmellor/.rvm/rubies/ruby-2.6.1/lib/ruby/gems/2.6.0/gems/rake-12.3.2/lib/rake/task.rb:273
