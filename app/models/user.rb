@@ -5,12 +5,12 @@ class User < ActiveRecord::Base
 
 
   has_many :weights
-  has_many :exercises
-  has_many :exercise_details, through: :exercises
-  has_many :exercise_types, through: :exercises
-  has_many :meals
-  has_many :meal_details, through: :meals
-  has_many :meal_types, through: :meals
+  has_many :activities
+  has_many :activity_details, through: :activities
+  has_many :activity_types, through: :activities
+  has_many :inputs
+  has_many :input_details, through: :inputs
+  has_many :input_types, through: :inputs
 
   def age_years( date_entered=Date.current )
     # Calculate the age in years from today as default, or a date passed in
@@ -48,41 +48,41 @@ class User < ActiveRecord::Base
     bmr
   end
 
-  def mealdiary( date= Date.current )
+  def inputdiary( date= Date.current )
 # Dates are a pain ... date = Date.new(YYYY,MM,DD,HH,MM) or just YYYY,MM,DD
 # Returns all meals for a user for a given day
-      meals.where( :meal_date => date.beginning_of_day..date.end_of_day)
+      inputs.where( :meal_date => date.beginning_of_day..date.end_of_day)
   end
 
-  def mealdiarycalories( date = Date.current )
+  def inputdiarycalories( date = Date.current )
     # We are mapping all of the meals on a day to get all of the meal meal_details
     # this returns an array of arrays .... so we need to flatten it to allow us
     # to get to the attributes/methods in the detail class.
     # MM 7/7/19 Modified to use the new attributes from the array as 
     # we now allow a user to change the serving_qty
-    mealdiary( date ).map {|m| m.meal_details }.flatten.map {|md| md.nf_calories * md.serving_qty }.sum
+    inputdiary( date ).map {|m| m.meal_details }.flatten.map {|md| md.unit_calories * md.unit_grams }.sum
   end
 
-  def mealdiarytype( date = Date.current )
+  def inputdiarytype( date = Date.current )
 # Returns the worst meal type for a given day
 # assumes the largest id is the worst
-    mealdiary( date ).map {|m| m.meal_type }.max_by {|mm| mm.id }
+    in inputdiary( date ).map {|i| i.input_type }.max_by {|mm| mm.id }
   end
 
-  def exercisediary( date = Date.current )
+  def activitydiary( date = Date.current )
     # Return all exercise class instances for a person on a given day
-    exercises.where( :exercise_date => date.beginning_of_day..date.end_of_day)
+    activities.where( :activity_date => date.beginning_of_day..date.end_of_day)
   end
 
-  def exercisediarycalories( date = Date.current )
+  def activitydiarycalories( date = Date.current )
     # returns the total calories spent exercising for a given day and user.
-    exercisediary( date ).map {|e| e.exercise_details }.flatten.map {|ed| ed.calories }.sum
+    activitydiary( date ).map {|a| a.activity_details }.flatten.map {|ad| ad.unit_calories*duration_min }.sum
   end
 
-  def exercisediarytype( date = Date.current )
+  def activitydiarytype( date = Date.current )
 # Returns the worst meal type for a given day
 # assumes the largest id is the worst
-    exercisediary( date ).map {|e| e.exercise_type }.max_by {|ee| ee.id }
+    activitydiary( date ).map {|a| a.activity_type }.max_by {|ee| ee.id }
   end
 
   def bmrsummary ( date=Date.current-6, iterations=7 )
@@ -107,37 +107,37 @@ class User < ActiveRecord::Base
     return_array
   end
 
-  def mealsummary( date=Date.current-6, iterations=7 )
-  # Return an array of meal entries, summarised by type,
+  def inputsummary( date=Date.current-6, iterations=7 )
+  # Return an array of Input entries, summarised by type,
   # for a range of dates starting with date
     returnarray = []
     counter=0
     iterations.times do
       searchdate=date+counter
-      mealhash = {
+      inputhash = {
         :date => searchdate,
-        :type => mealdiarytype( searchdate ),
-        :calories => mealdiarycalories( searchdate )
+        :type => inputdiarytype( searchdate ),
+        :calories => inputdiarycalories( searchdate )
       }
-      returnarray << mealhash
+      returnarray << inputhash
       counter+=1
     end
     returnarray
   end
 
-  def exercisesummary( date=Date.current-6, iterations=7 )
-  # Return an array of exercise entries, summarised by type,
+  def activitysummary( date=Date.current-6, iterations=7 )
+  # Return an array of Activity entries, summarised by type,
   # for a range of dates starting with date
     returnarray = []
     counter=0
     iterations.times do
       searchdate=date+counter
-      exercisehash = {
+      activityhash = {
         :date => searchdate,
-        :type => exercisediarytype( searchdate ),
-        :calories => exercisediarycalories( searchdate )
+        :type => activitydiarytype( searchdate ),
+        :calories => activitydiarycalories( searchdate )
       }
-      returnarray << exercisehash
+      returnarray << activityhash
       counter+=1
     end
     returnarray
@@ -151,25 +151,25 @@ class User < ActiveRecord::Base
     iterations.times do
       searchdate=date+counter
       bmr = bmr( searchdate )
-      food = mealdiarycalories( searchdate )
-      exercise = exercisediarycalories( searchdate )
-      deficit = food - bmr - exercise
-      insight = getinsight(date,bmr,food,exercise,deficit)
-      exercisehash = {
+      input = inputdiarycalories( searchdate )
+      activity = activitydiarycalories( searchdate )
+      deficit = input - bmr - activity
+      insight = getinsight(date,bmr,input,activity,deficit)
+      summaryhash = {
         :date => searchdate,
         :bmr => bmr,
-        :food => food,
-        :exercise => exercise,
+        :input => input,
+        :activity => activity,
         :deficit => deficit,
         :insight => insight
       }
-      returnarray << exercisehash
+      returnarray << summaryhash
       counter+=1
     end
     returnarray
   end
 
-  def getinsight( date,bmr,food,exercise,deficit )
+  def getinsight( date,bmr,input,activity,deficit )
     # Will return a bit of insight into what is going on with you
     # This should look at historical data, do stsatistical analysis etc
     # Possibly extend the use of the API to get recommended calorie intakes

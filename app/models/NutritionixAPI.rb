@@ -8,7 +8,7 @@ class Nutritionixapi
 # as environment variables, that you can get from nutrionix as part of their developer
 # program
 
-  def get_mealinfo(detail)
+  def get_inputinfo(detail)
 # Returns a hash of individual components of a free text get_meal
 # using the nutrionix api
 
@@ -28,7 +28,7 @@ class Nutritionixapi
 
   end
 
-  def get_exerciseinfo( detail, user )
+  def get_activityinfo( detail, user )
 # Returns details of free text exerise.
 # It requires a persons details to calculate calorie burn
 # NEED TO CHANGE TO TAKE IN THE USER OBJECT
