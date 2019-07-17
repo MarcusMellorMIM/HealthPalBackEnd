@@ -19,6 +19,7 @@ class WeightsController < ApplicationController
     # As we want to manipulate weight_date ... using the permitted params method
     # seems to cause issues - ideally I would like to set the date, and use weight_params
         user=current_user;
+        byebug
         if user
             weight_kg=params[:detail][:weight_kg]
         # Dodgy method of sorting out the date

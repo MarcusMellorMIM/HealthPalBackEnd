@@ -66,7 +66,7 @@ class User < ActiveRecord::Base
   def inputdiarytype( date = Date.current )
 # Returns the worst meal type for a given day
 # assumes the largest id is the worst
-    in inputdiary( date ).map {|i| i.input_type }.max_by {|mm| mm.id }
+    inputdiary( date ).map {|i| i.input_type }.max_by {|mm| mm.id }
   end
 
   def activitydiary( date = Date.current )

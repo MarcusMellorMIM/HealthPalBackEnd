@@ -20,7 +20,7 @@ class Initial < ActiveRecord::Migration[5.2]
       t.timestamps
     end
 
-    create_table :activity do |t|
+    create_table :activities do |t|
       t.string :detail
       t.datetime :activity_date
       t.integer :user_id
