@@ -12,6 +12,7 @@ Things you may want to cover:
 gem 'bcrypt'
 gem 'rack-cors'
 gem 'jwt'
+gem install bundler -v
 
 * Configuration
 
