@@ -48,8 +48,13 @@ class WeightsController < ApplicationController
 
     def destroy
         if logged_in
-            weight = Weight.find(params[:id]);
+            if params[:id]==-1
+                weight=Weight.all.last
+            else
+                weight = Weight.find(params[:id]);
+            end
             weight.destroy;
+            render json: weight
         end
     end
     
