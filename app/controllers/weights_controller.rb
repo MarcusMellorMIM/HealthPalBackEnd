@@ -50,12 +50,14 @@ class WeightsController < ApplicationController
         user=current_user;
         if user
             if params[:id]==0
-                weight=user.weights.last
+                weight = user.weights.last
+                result = {weight1:0}
             else
                 weight = user.weights.find(params[:id]);
+                result = {weight2:1}
             end
             weight.destroy;
-            render json: weight
+            render json: result
         end
     end
     
