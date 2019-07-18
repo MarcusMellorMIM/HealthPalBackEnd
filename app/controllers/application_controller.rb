@@ -2,13 +2,13 @@ class ApplicationController < ActionController::API
 
     def issue_token(payload)
         
-        JWT.encode(payload, ENV['FITBOOK_SECRET'])
+        JWT.encode(payload, ENV['HEALTHPAL_SECRET'])
        
       end 
       
       def decode_token(token)
      
-        JWT.decode(token, ENV['FITBOOK_SECRET'])[0]
+        JWT.decode(token, ENV['HEALTHPAL_SECRET'])[0]
         
       end
 
