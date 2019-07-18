@@ -39,7 +39,12 @@ class WeightsController < ApplicationController
                         weight_date:weight_date)
 
             render json: weight
-        end
+        else
+            weight = Weight.new
+        end 
+
+        render json: weight
+
     end
 
     def destroy
