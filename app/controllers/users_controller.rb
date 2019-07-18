@@ -2,9 +2,10 @@ class UsersController < ApplicationController
 
     def show
         user = current_user
-        if user
-            render json: user
+        if !user
+            user=User.new
         end
+        render json: user
     end
 
     def create

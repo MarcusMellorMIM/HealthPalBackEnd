@@ -11,8 +11,10 @@ class WeightsController < ApplicationController
     def show
         if logged_in
             weight = Weight.find(params[:id])
-            render json: weight
+        else
+            weight = Weight.new
         end
+        render json: weight
     end
 
     def create
