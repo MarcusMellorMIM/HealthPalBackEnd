@@ -38,7 +38,6 @@ class WeightsController < ApplicationController
                         weight_kg:weight_kg,
                         weight_date:weight_date)
 
-            render json: weight
         else
             weight = Weight.new
         end 
