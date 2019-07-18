@@ -56,7 +56,9 @@ class WeightsController < ApplicationController
                 weight = user.weights.find(params[:id]);
                 result = {weight2:1}
             end
-            weight.destroy;
+            if weight
+                weight.destroy;
+            end
             render json: result
         end
     end
