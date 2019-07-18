@@ -9,6 +9,10 @@ Things you may want to cover:
 
 * System dependencies
 
+gem 'bcrypt'
+gem 'rack-cors'
+gem 'jwt'
+
 * Configuration
 
 * Database creation
