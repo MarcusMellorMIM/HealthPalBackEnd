@@ -49,7 +49,7 @@ class WeightsController < ApplicationController
     def destroy
         user=current_user;
         if user
-            if params[:id]==0
+            if params[:id]=="last"
                 weight = user.weights.last
                 result = {weight1:0}
             else
