@@ -48,8 +48,9 @@ class WeightsController < ApplicationController
 
     def destroy
         user=current_user;
+        byebug
         if user
-            if params[:id]==-1
+            if params[:id]==0
                 weight=user.weights.last
             else
                 weight = user.weights.find(params[:id]);
