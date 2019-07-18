@@ -56,7 +56,7 @@ class WeightsController < ApplicationController
             end
             if weight
                 result = {weight_kg:weight.weight_kg,
-                        weight_date:weight_date }
+                        weight_date:weight.weight_date }
                 weight.destroy;
             else
                 result = {weight_kg:"",
