@@ -5,12 +5,12 @@ class UsersController < ApplicationController
         if !user
             user=User.new
         end
-        render json: user
+        render json: user, except: [:password_digest]
     end
 
     def create
         user = User.create!(user_params)
-        render json: user
+        render json: user, except: [:password_digest]
     end
 
     def update
@@ -20,7 +20,7 @@ class UsersController < ApplicationController
             if user.valid?
                 user.save
             end
-            render json: user
+            render json: user, except: [:password_digest]
         end
     end
 
