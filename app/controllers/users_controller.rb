@@ -1,3 +1,4 @@
+require 'json'
 class UsersController < ApplicationController
 
     def show
@@ -5,7 +6,16 @@ class UsersController < ApplicationController
         if !user
             user=User.new
         end
+
         render json: user, except: [:password_digest]
+
+    end
+
+    def summary 
+        user = current_user
+        if user
+            render json: user.caloriesummary
+        end 
     end
 
     def create

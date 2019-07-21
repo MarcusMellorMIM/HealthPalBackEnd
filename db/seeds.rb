@@ -5,3 +5,11 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+ActivityType.create(detail:"light")
+ActivityType.create(detail:"moderate")
+ActivityType.create(detail:"intense")
+
+InputType.create(detail:'angelic')
+InputType.create(detail:'meh')
+InputType.create(detail:'guilty')
+

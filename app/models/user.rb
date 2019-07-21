@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
   def inputdiary( date= Date.current )
 # Dates are a pain ... date = Date.new(YYYY,MM,DD,HH,MM) or just YYYY,MM,DD
 # Returns all meals for a user for a given day
-      inputs.where( :meal_date => date.beginning_of_day..date.end_of_day)
+      inputs.where( :input_date => date.beginning_of_day..date.end_of_day)
   end
 
   def inputdiarycalories( date = Date.current )
@@ -60,7 +60,9 @@ class User < ActiveRecord::Base
     # to get to the attributes/methods in the detail class.
     # MM 7/7/19 Modified to use the new attributes from the array as 
     # we now allow a user to change the serving_qty
-    inputdiary( date ).map {|m| m.meal_details }.flatten.map {|md| md.unit_calories * md.unit_grams }.sum
+    # inputdiary( date ).map {|m| m.input_details }.flatten.map {|md| md.unit_calories * md.unit_grams }.sum
+
+    inputdiary( date ).sum {|i| i.calories ? i.calories : 0 }
   end
 
   def inputdiarytype( date = Date.current )
@@ -156,7 +158,7 @@ class User < ActiveRecord::Base
       deficit = input - bmr - activity
       insight = getinsight(date,bmr,input,activity,deficit)
       summaryhash = {
-        :date => searchdate,
+        :search_date => searchdate.to_s,
         :bmr => bmr,
         :input => input,
         :activity => activity,
@@ -166,7 +168,9 @@ class User < ActiveRecord::Base
       returnarray << summaryhash
       counter+=1
     end
+
     returnarray
+
   end
 
   def getinsight( date,bmr,input,activity,deficit )

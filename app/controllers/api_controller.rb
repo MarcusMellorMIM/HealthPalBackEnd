@@ -1,19 +1,19 @@
 class ApiController < ApplicationController
 
-    def food
+    def input
         if logged_in
             api= Nutritionixapi.new
-            food=api.get_mealinfo(params[:detail])
-            render json: food
+            input=api.get_inputinfo(params[:detail])
+            render json: input
         end
     end
 
-    def exercise
+    def activity
         user = current_user
         if user
             api= Nutritionixapi.new
-            exercise=api.get_exerciseinfo(params[:detail], user )
-            render json: exercise
+            activity=api.get_activityinfo(params[:detail], user )
+            render json: activity
         end
     end
 end
