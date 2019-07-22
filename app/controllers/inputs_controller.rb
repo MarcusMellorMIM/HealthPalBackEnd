@@ -50,7 +50,7 @@ class InputsController < ApplicationController
             create_inputdetails( input, input_details )
 
             render json: input, except: [:created_at],
-                    include:  :input_details
+                    include:  [ :input_details ]
         end
     end
 
@@ -116,6 +116,7 @@ private
         }
    
         input.update(calories:calories)
+        input.save
 
     end 
 
