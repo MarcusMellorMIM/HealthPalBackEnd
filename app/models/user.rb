@@ -188,19 +188,19 @@ class User < ActiveRecord::Base
     # For now, will be pretty basic
 
     if bmr == 0
-      insight = "Data issue, please check age, sex and weight is recorded"
+      insight = "Data issue, please check age, sex and weight is recorded. "
     elsif input == 0 && activity == 0
-      insight = "Please add an activity and some food to get an insight"
+      insight = "Please add an activity and some food to get an insight. "
     elsif deficit > (bmr*0.2)
-      insight = "Phew, you sure are eating, maybe slow down a little "
+      insight = "Phew, you sure are eating, maybe slow down a little. "
     elsif deficit > (bmr*0.1)
-      insight = "Not too bad, but either eat less, or exercise more"
+      insight = "Not too bad, but either eat less, or exercise more. "
     elsif deficit > (0-(bmr*0.1))
-      insight = "You are keeping it steady, well done."
+      insight = "You are keeping it steady, well done. "
     elsif deficit > (0-(bmr*0.2))
-      insight = "You must be feeling hungry, maybe eat a little more"
+      insight = "You must be feeling hungry, maybe eat a little more. "
     else
-      insight = "Are you a monk on bread and water ? please eat !"
+      insight = "Are you a monk on bread and water ? please eat ! "
     end
   end
 
@@ -220,7 +220,7 @@ class User < ActiveRecord::Base
     end
     
     if input>0 && activity>0
-      speechtext = speechtext + " Well done. Keep up the good work !!!"
+      speechtext = speechtext + " Well done using Eloise, maybe consider adding a goal !!!"
     else  
       speechtext = speechtext + " To get the best out of me, please do make sure you use me every day." 
     end
