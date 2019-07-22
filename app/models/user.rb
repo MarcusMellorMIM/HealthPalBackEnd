@@ -78,7 +78,8 @@ class User < ActiveRecord::Base
 
   def activitydiarycalories( date = Date.current )
     # returns the total calories spent exercising for a given day and user.
-    activitydiary( date ).map {|a| a.activity_details }.flatten.map {|ad| ad.unit_calories*ad.duration_min }.sum
+    activitydiary( date ).sum {|i| i.calories ? i.calories : 0 }
+
   end
 
   def activitydiarytype( date = Date.current )
@@ -145,7 +146,7 @@ class User < ActiveRecord::Base
     returnarray
   end
 
-  def caloriesummary( date=Date.current-6, iterations=7 )
+  def caloriesummary( date=Date.current-2, iterations=3 )
   # Return an array of exercise entries, summarised by type,
   # for a range of dates starting with date
     returnarray = []
@@ -157,13 +158,20 @@ class User < ActiveRecord::Base
       activity = activitydiarycalories( searchdate )
       deficit = input - bmr - activity
       insight = getinsight(date,bmr,input,activity,deficit)
+      speechtext = getspeechtext(date,bmr,input,activity,deficit)
+
+      if searchdate==Date.current
+        bmr = (bmr * (Time.current.strftime("%H").to_f / 24.0 ).to_f).ceil(1)
+      end
+
       summaryhash = {
         :search_date => searchdate.to_s,
         :bmr => bmr,
         :input => input,
         :activity => activity,
         :deficit => deficit,
-        :insight => insight
+        :insight => insight,
+        :speechtext => speechtext
       }
       returnarray << summaryhash
       counter+=1
@@ -180,18 +188,45 @@ class User < ActiveRecord::Base
     # For now, will be pretty basic
 
     if bmr == 0
-      insight = "Data??"
+      insight = "Data issue, please check age, sex and weight is recorded"
+    elsif input == 0 && activity == 0
+      insight = "Please add an activity and some food to get an insight"
     elsif deficit > (bmr*0.2)
-      insight = "Porky?"
+      insight = "Phew, you sure are eating, maybe slow down a little "
     elsif deficit > (bmr*0.1)
-      insight = "Exercise!"
+      insight = "Not too bad, but either eat less, or exercise more"
     elsif deficit > (0-(bmr*0.1))
-      insight = "Ok"
+      insight = "You are keeping it steady, well done."
     elsif deficit > (0-(bmr*0.2))
-      insight = "Hungry?"
+      insight = "You must be feeling hungry, maybe eat a little more"
     else
-      insight = "Eat!"
+      insight = "Are you a monk on bread and water ? please eat !"
     end
+  end
+
+  def getspeechtext( date,bmr,input,activity,deficit )
+    # Will return a written version of the calory calculation
+
+    if input == 0 
+      speechtext = "You have not recorded any food or drinks. "
+    else
+      speechtext = "Your intake was " + input.to_s + " calories. " 
+    end
+
+    if activity == 0 
+      speechtext = speechtext + "You have not recorded any activities. "
+    else  
+      speechtext = speechtext + "You burnt " + activity.to_s + " calories. "
+    end
+    
+    if input>0 && activity>0
+      speechtext = speechtext + " Well done. Keep up the good work !!!"
+    else  
+      speechtext = speechtext + " To get the best out of me, please do make sure you use me every day." 
+    end
+
+    speechtext
+
   end
 
 end
