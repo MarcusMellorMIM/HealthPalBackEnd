@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
 
   def activitydiarycalories( date = Date.current )
     # returns the total calories spent exercising for a given day and user.
-    activitydiary( date ).map {|a| a.activity_details }.flatten.map {|ad| ad.unit_calories*duration_min }.sum
+    activitydiary( date ).map {|a| a.activity_details }.flatten.map {|ad| ad.unit_calories*ad.duration_min }.sum
   end
 
   def activitydiarytype( date = Date.current )

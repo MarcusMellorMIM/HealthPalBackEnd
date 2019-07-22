@@ -13,8 +13,11 @@ class UsersController < ApplicationController
 
     def summary 
         user = current_user
+        start_date=request.headers["startDate"]
+        end_date=request.headers["startDate"]
         if user
-            render json: user.caloriesummary
+            render json: request.headers["startDate"]
+#            render json: user.caloriesummary
         end 
     end
 

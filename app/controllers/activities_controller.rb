@@ -60,9 +60,21 @@ class ActivitiesController < ApplicationController
     def destroy
         user = current_user
         if user
-            activity = user.activity.find(params[:id]);
-            activity.activity_details.destroy;
-            activity.destroy;
+            if params[:id]=="last"
+                activity=user.activities.last
+            else 
+                activity = user.activities.find(params[:id]);
+            end
+            if activity
+                result = {detail:activity.detail,
+                        calories:activity.calories }
+                activity.activity_details.destroy_all;
+                activity.destroy;
+            else
+                result = {detail:"",
+                    calories:0 }
+            end 
+            render json: result
         end
     end
     
