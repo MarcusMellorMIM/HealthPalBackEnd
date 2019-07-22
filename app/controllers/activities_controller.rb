@@ -119,6 +119,7 @@ private
             )
         }
         
+        activity.reload
         activity.update(calories:calories)
         activity.save
         

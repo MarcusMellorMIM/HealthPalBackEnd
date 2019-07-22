@@ -113,7 +113,7 @@ private
     # I want the total calories rendered in the input object ... the only way 
     # I can figure out how to do this at the moment, is to save in the db
     # If I can resolve the render ... I can get rid of this, and just use helpers
-        calories=0 
+        calories=0
         input_details.map { |f|
             calories+=(f[:serving_qty].to_f * f[:unit_calories].to_f).to_i
             inputdetail=InputDetail.create(
@@ -126,7 +126,8 @@ private
                 photo_thumb:f[:photo_thumb]
             )
         }
-   
+
+        input.reload
         input.update(calories:calories)
         input.save
 
