@@ -26,10 +26,10 @@ class Nutritionixapi
     
     # Ok so this works simply with alexa and the web app allowing for user interaction etc
     # we need to manipuate the return data to be what we need, with appropriate names
-    returnHash=[]
+    returnArray=[]
     returnJSON = JSON.parse(res.body)["foods"]
     if returnJSON.length>0
-      returnHash = returnJSON.map {|food|
+      returnArray = returnJSON.map {|food|
         foodHash = {}
         foodHash[:name]=food["food_name"]
         foodHash[:unit_calories] = food["nf_calories"].to_f / food["serving_qty"].to_f
@@ -52,10 +52,10 @@ class Nutritionixapi
       foodHash[:nf_calories] = 0
       foodHash[:serving_weight_grams] = 0
       foodHash[:serving_qty] = 0
-      returnHash << foodHash
+      returnArray << foodHash
     end
 
-    returnHash
+    returnArray
  
   end
 
@@ -65,10 +65,10 @@ class Nutritionixapi
 
     @body = {
       "query" => detail,
-      "gender" => user.gender,
-      "weight_kg" => user.latest_weight_kg,
-      "height_cm" => user.height_cm,
-      "age" => user.age_years
+      "gender" => user.gender ? user.gender : "M",
+      "weight_kg" => user.latest_weight_kg ? user.latest_weight_kg : 80,
+      "height_cm" => user.height_cm ? user.height_cm : 170 ,
+      "age" => user.age_years ? user.age_years : 30
     }.to_json
 
     uri = URI.parse("https://trackapi.nutritionix.com/v2/natural/exercise")
@@ -78,8 +78,31 @@ class Nutritionixapi
     req.body = @body
     res = https.request(req)
 
-    JSON.parse(res.body)["exercises"]
- 
-  end
+    # Ok so this works simply with alexa and the web app allowing for user interaction etc
+    # we need to manipuate the return data to be what we need, with appropriate names
+    returnArray=[]
+    returnJSON = JSON.parse(res.body)["exercises"]
+
+    if returnJSON.length>0
+      returnArray = returnJSON.map { |a|
+        activityHash={}
+        activityHash[:name]=a["name"]
+        activityHash[:unit_calories]= a["nf_calories"].to_f / a["duration_min"].to_f
+        activityHash[:duration_min]=a["duration_min"]
+        activityHash[:photo_thumb]=a["photo"]["thumb"]
+        activityHash
+      }
+    else 
+      activityHash={}
+      activityHash[:name]="DEFAULT: " + detail
+      activityHash[:unit_calories]= 0           
+      activityHash[:duration_min]=0
+      activityHash[:photo_thumb]=""
+      returnArray << activityHash
+    end
+
+    returnArray
+
+end
 
 end

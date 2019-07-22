@@ -58,9 +58,21 @@ class InputsController < ApplicationController
     def destroy
         user = current_user
         if user
-            input = user.inputs.find(params[:id]);
-            input.input_details.destroy;
-            input.destroy;
+            if params[:id]=="last"
+                input=user.inputs.last
+            else 
+                input = user.inputs.find(params[:id]);
+            end 
+            if input 
+                result = {detail:input.detail,
+                        calories:input.calories }
+                input.input_details.destroy;
+                input.destroy;
+            else
+                result = {detail:"",
+                    calories:0 }
+            end 
+            render json: result
         end
     end
     

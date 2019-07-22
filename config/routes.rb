@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get "/usersummary", to: "users#summary", as: "usersummary"
   resources :weights, only: [ :index, :show, :create, :destroy, :update]
   resources :inputs, only: [ :index, :show, :create, :destroy, :update]
+  resources :activities, only: [ :index, :show, :create, :destroy, :update]
 
 
   # resources :exercises, only: [ :show, :create, :destroy, :update]
