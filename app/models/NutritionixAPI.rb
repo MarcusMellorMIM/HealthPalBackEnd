@@ -27,21 +27,35 @@ class Nutritionixapi
     # Ok so this works simply with alexa and the web app allowing for user interaction etc
     # we need to manipuate the return data to be what we need, with appropriate names
     returnHash=[]
-    returnHash = JSON.parse(res.body)["foods"].map {|food|
+    returnJSON = JSON.parse(res.body)["foods"]
+    if returnJSON.length>0
+      returnHash = returnJSON.map {|food|
+        foodHash = {}
+        foodHash[:name]=food["food_name"]
+        foodHash[:unit_calories] = food["nf_calories"].to_f / food["serving_qty"].to_f
+        foodHash[:serving_unit] = food["serving_unit"]
+        foodHash[:unit_grams] = food["serving_weight_grams"].to_f / food["serving_qty"].to_f
+        foodHash[:photo_thumb] = food["photo"]["thumb"]
+        foodHash[:nf_calories] = food["nf_calories"]
+        foodHash[:serving_weight_grams] = food["serving_weight_grams"]
+        foodHash[:serving_qty] = food["serving_qty"]
+        foodHash
+      }
+    else 
+      # Sometimes the interface does not find anything ... in which case, do this to prevent errors
       foodHash = {}
-      foodHash[:name]=food["food_name"]
-      foodHash[:unit_calories] = food["nf_calories"].to_f / food["serving_qty"].to_f
-      foodHash[:serving_unit] = food["serving_unit"]
-      foodHash[:unit_grams] = food["serving_weight_grams"].to_f / food["serving_qty"].to_f
-      foodHash[:photo_thumb] = food["photo"]["thumb"]
-      foodHash[:nf_calories] = food["nf_calories"]
-      foodHash[:serving_weight_grams] = food["serving_weight_grams"]
-      foodHash[:serving_qty] = food["serving_qty"]
-      foodHash
-    }
+      foodHash[:name]="DEFAULT: " + detail,
+      foodHash[:unit_calories] = 0
+      foodHash[:serving_unit] = ""
+      foodHash[:unit_grams] = 0
+      foodHash[:photo_thumb] = ""
+      foodHash[:nf_calories] = 0
+      foodHash[:serving_weight_grams] = 0
+      foodHash[:serving_qty] = 0
+      returnHash << foodHash
+    end
 
     returnHash
-    # JSON.parse(res.body)["foods"]
  
   end
 
