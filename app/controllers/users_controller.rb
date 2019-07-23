@@ -5,9 +5,14 @@ class UsersController < ApplicationController
         user = current_user
         if !user
             user=User.new
+            hash={speechtext:"Invalid user"}
+        else 
+            hash={speechtext:user.getspeechwelcome}
         end
-
-        render json: user, except: [:password_digest]
+        # I want to add a helper method in the user hash
+        # The following is the only way I could think of doing this ....
+        user_hash=hash.merge(user.attributes).slice!("password_digest")
+        render json: user_hash
 
     end
 

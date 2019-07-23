@@ -229,4 +229,34 @@ class User < ActiveRecord::Base
 
   end
 
+  def getspeechwelcome
+
+    # Looks at entered data, and will return speec to 
+    # guide the user to add more to the solution
+    # In a sense, a mini user guide
+
+    speechtext="Hello " + self.name
+    weight_kg=self.latest_weight_kg
+    last_input_entry=self.inputs.last.input_date
+    last_activity_entry=self.activities.last.activity_date
+    if dob==nil || gender==nil || height_cm==nil || weight_kg==nil || last_input_entry==nil || last_activity_entry==nil
+      if weight_kg==nil
+        speechtext += ", I do not have your weight. Please say add weight to record your weight. At the moment I can only accept kilograms. "
+      elsif last_input_entry==nil
+        speechtext += ", You haven't recorded any food or drinks. Please say add food. "
+      elsif @height_cm==nil
+        speechtext += ", I need your height in cm to calculate your daily BMR. Please say add height. "
+      elsif @gender==nil
+        speechtext += ", I need your physical gender to calculate your BMR. Please say add gender. "
+      elsif @dob==nil 
+        speechtext += ", I need to know how old you are to calculate your BMR. Please say add age. "
+      end
+    else 
+      speechtext += ", welcome back, what would you like to do ? "
+    end
+
+    speechtext
+
+  end
+
 end
