@@ -292,10 +292,11 @@ class User < ActiveRecord::Base
     last_input_entry=self.inputs.last.input_date      
     last_activity_entry=self.activities.last.activity_date
 
-    if last_input_entry>Date.current || last_input_entry==nil
+    if last_input_entry<Date.current || last_input_entry==nil
       input_req_today=true
     end 
-    if last_activity_entry>Date.current || last_activity_entry==nil
+
+    if last_activity_entry<Date.current || last_activity_entry==nil
       activity_req_today=true
     end 
 
