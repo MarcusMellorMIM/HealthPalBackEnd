@@ -5,9 +5,10 @@ class UsersController < ApplicationController
         user = current_user
         if !user
             user=User.new
-            hash={speechtext:"Invalid user"}
+            hash={salutation:"Invalid user",
+                speechtext:"Invalid user"}
         else 
-            hash={speechtext:user.getspeechwelcome}
+            hash=user.getinteractivespeech
         end
         # I want to add a helper method in the user hash
         # The following is the only way I could think of doing this ....
@@ -37,7 +38,12 @@ class UsersController < ApplicationController
             if user.valid?
                 user.save
             end
-            render json: user, except: [:password_digest]
+            user.reload
+    # Used to create interaction with speech enabled devices
+            hash=user.getinteractivespeech
+            user_hash=hash.merge(user.attributes).slice!("password_digest")
+            render json: user_hash
+
         end
     end
 
