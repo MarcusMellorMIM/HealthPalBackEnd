@@ -34,7 +34,13 @@ class UsersController < ApplicationController
     def update
         user = current_user
         if current_user
-            user.assign_attributes(user_params)
+            updateHash=user_params
+            if params[:detail]["age_years"]
+                newHash={}
+                newHash["dob"]=Date.new(Date.current.year-params[:detail]["age_years"].to_i)
+                updateHash=updateHash.merge(newHash)
+            end
+            user.assign_attributes(updateHash)
             if user.valid?
                 user.save
             end
