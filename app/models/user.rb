@@ -49,15 +49,15 @@ class User < ActiveRecord::Base
     if bmi < 18.5
       suggested_weight=deconstruct_bmi( bmi * 1.1 );
       resultHash["range"]="Underweight"
-      resultHash["suggestion"]="Your BMI is " + bmi_str + " for this reason, you could do with putting on a bit of weight."
+      resultHash["suggestion"]="Your BMI is " + bmi_str + ", for this reason, you could do with putting on a bit of weight."
     elsif bmi < 25 
       suggested_weight=deconstruct_bmi( 22 );
       resultHash["range"]="Normal"
-      resultHash["suggestion"]="Good job, your BMI is " + bmi_str + " which means your weight is within normal range."
+      resultHash["suggestion"]="Good job, your BMI is " + bmi_str + ", which means your weight is within normal range."
     elsif bmi < 30
       suggested_weight=deconstruct_bmi( bmi * 0.9 );
       resultHash["range"]="Overweight"
-      resultHash["suggestion"]="Your BMI is " + bmi_str + " which means you are a little overweight. Maybe lose a little ? "
+      resultHash["suggestion"]="Your BMI is " + bmi_str + ", which means you are a little overweight. Maybe lose a little ? "
     else
       suggested_weight=deconstruct_bmi( bmi * 0.9 );
       resultHash["range"]="Obese"
@@ -309,7 +309,7 @@ class User < ActiveRecord::Base
       elsif activity_req_today
         speechtext += ", You haven't recorded any activities today. Please say add activity. "
       elsif height_cm==nil
-        speechtext += ", I need your height in cm to calculate your daily BMR. Please say add height. "
+        speechtext += ", I need your height in centimetres to calculate your daily BMR. Please say add height. "
       elsif gender==nil || gender==""
         speechtext += ", I need your physical gender to calculate your BMR. Please say add gender. "
       elsif dob==nil
