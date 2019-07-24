@@ -323,6 +323,7 @@ class User < ActiveRecord::Base
     end
 
     returnHash = { salutation:salutation,
+                  speechcongrats:"",
                   speechtext:speechtext}
 
     returnHash

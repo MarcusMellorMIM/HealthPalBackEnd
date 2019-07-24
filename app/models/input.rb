@@ -9,4 +9,31 @@ class Input < ActiveRecord::Base
     }
   end
 
+  def getinteractivespeech
+
+    # Looks at entered data, and will return speech to voice activated devices 
+
+    salutation = "Hello " + self.user.name
+    searchdate = self.input_date
+    bmr = self.user.bmr( searchdate )
+    input = self.user.inputdiarycalories( searchdate )
+    activity = self.user.activitydiarycalories( searchdate )
+    deficit = (input - bmr - activity).ceil(0)
+
+    if deficit < 0
+      speechtext = "you can eat or drink " + (0-deficit).to_s + " more calories, and maintain your weight."
+    else
+      speechtext = "you have eaten " + deficit.to_s + " more than you should have, if you want to maintain your weight."
+    end
+
+    speechcongrats = "Well done" # Ideally will come from a random array
+    returnHash = { salutation:salutation,
+                  speechcongrats:speechcongrats,
+                  speechtext:speechtext}
+
+    returnHash
+
+  end
+
+
 end

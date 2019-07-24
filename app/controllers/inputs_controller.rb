@@ -47,10 +47,14 @@ class InputsController < ApplicationController
                 input_details = params[:detail][:input_detail]
             end
 
+            # Get a helpful hint
             create_inputdetails( input, input_details )
+            hash = input.getinteractivespeech
+            input_hash=hash.merge(input.attributes)
+            input_hash=input_hash.merge({ input_details:input.input_details.map {|id| id.attributes }})
 
-            render json: input, except: [:created_at],
-                    include:  [ :input_details ]
+            render json: input_hash
+
         end
     end
 
