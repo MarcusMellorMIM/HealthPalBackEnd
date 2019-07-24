@@ -316,7 +316,7 @@ class User < ActiveRecord::Base
 
     if dob==nil || gender==nil || height_cm==nil || !latest_weight || input_req_today || activity_req_today
       if !latest_weight
-        speechtext += ", I need your weight in kilograms to calculate your daily BMR. Please say add height. "
+        speechtext += ", I need your weight in kilograms to calculate your daily BMR. Please say add weight. "
       elsif height_cm==nil
         speechtext += ", I need your height in centimetres to calculate your daily BMR. Please say add height. "
       elsif gender==nil || gender==""
