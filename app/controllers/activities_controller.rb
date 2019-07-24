@@ -50,10 +50,10 @@ class ActivitiesController < ApplicationController
             end
 
             create_activitydetails( activity, activity_details )
-
-            render json: activity, except: [:created_at],
-                    include:  [ :activity_details ]
-            
+            hash = activity.getinteractivespeech
+            activity_hash=hash.merge(activity.attributes)
+            activity_hash=activity_hash.merge({ activity_details:activity.activity_details.map {|ad| ad.attributes }})
+            render json: activity_hash            
         end
     end
 

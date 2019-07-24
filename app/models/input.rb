@@ -21,16 +21,18 @@ class Input < ActiveRecord::Base
     deficit = (input - bmr - activity).ceil(0)
 
     if deficit < 0
-      speechtext = "you can eat or drink " + (0-deficit).to_s + " more calories, and maintain your weight."
+      speechtext = "you can eat or drink " + (0-deficit).to_s + " more calories, and maintain your weight. "
     else
-      speechtext = "you have eaten " + deficit.to_s + " more than you should have, if you want to maintain your weight."
+      speechtext = "you have eaten " + deficit.to_s + " more than you should have, if you want to maintain your weight. "
     end
 
-    speechcongrats = "Well done" # Ideally will come from a random array
+    speechHash = self.user.getinteractivespeech
+    speechtext += speechHash[:speechtext]
+    speechcongrats = speechHash[:speechcongrats]
     returnHash = { salutation:salutation,
                   speechcongrats:speechcongrats,
                   speechtext:speechtext}
-
+    
     returnHash
 
   end

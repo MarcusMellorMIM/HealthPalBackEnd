@@ -42,7 +42,11 @@ class WeightsController < ApplicationController
             weight = Weight.new
         end 
 
-        render json: weight
+        # Get a response to guide the user when using a speech device
+        hash=user.getinteractivespeech
+        weight_hash=hash.merge(weight.attributes)
+
+        render json: weight_hash
 
     end
 

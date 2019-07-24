@@ -23,10 +23,15 @@ class User < ActiveRecord::Base
 
   def latest_weight_kg( date_entered=Date.current)
     # Get the last weight entered, on or prior to a given date's midnight
-    weight=weights.where( "weight_date < ?", date_entered.end_of_day).last
+    weight=latest_weight( date_entered )
     if weight
       weight_kg=weight.weight_kg
     end
+  end
+
+  def latest_weight( date_entered=Date.current)
+    # Get the last weight entered, on or prior to a given date's midnight
+    weights.where( "weight_date < ?", date_entered.end_of_day).last
   end
 
   def bmi( date = Date.current)
@@ -49,19 +54,27 @@ class User < ActiveRecord::Base
     if bmi < 18.5
       suggested_weight=deconstruct_bmi( bmi * 1.1 );
       resultHash["range"]="Underweight"
-      resultHash["suggestion"]="Your BMI is " + bmi_str + ", for this reason, you could do with putting on a bit of weight."
+      resultHash["suggestion1"]="Your BMI is " + bmi_str + ", for this reason, you could do with putting on a bit of weight."
+      resultHash["suggestion2"]="Your BMI is " + bmi_str + ", if you get your weight to " + deconstruct_bmi(18.5).to_s + " kilos, you will then be in the normal weight range. " 
+      resultHash["suggestion3"]="Maybe set a target to increase your weight to " + suggested_weight.to_s
     elsif bmi < 25 
       suggested_weight=deconstruct_bmi( 22 );
       resultHash["range"]="Normal"
-      resultHash["suggestion"]="Good job, your BMI is " + bmi_str + ", which means your weight is within normal range."
+      resultHash["suggestion1"]="Good job, your BMI is " + bmi_str + ", which means your weight is within normal range."
+      resultHash["suggestion2"]=""
+      resultHash["suggestion3"]=""
     elsif bmi < 30
       suggested_weight=deconstruct_bmi( bmi * 0.9 );
       resultHash["range"]="Overweight"
-      resultHash["suggestion"]="Your BMI is " + bmi_str + ", which means you are a little overweight. Maybe lose a little ? "
+      resultHash["suggestion1"]="Your BMI is " + bmi_str + ", which means you are a little overweight. Maybe lose a little ? "
+      resultHash["suggestion2"]="You are a little overweight, maybe set a goal to get your weight down to " + suggested_weight.to_s 
+      resultHash["suggestion3"]="Your BMI is " + bmi_str + ", if you get your weight to " + deconstruct_bmi(25).to_s + " kilos, you will then just be in the normal range. " 
     else
       suggested_weight=deconstruct_bmi( bmi * 0.9 );
       resultHash["range"]="Obese"
-      resultHash["suggestion"]="Your BMI is " + bmi_str + ", for health reasons, I would urge you to lose some weight."
+      resultHash["suggestion1"]="Your BMI is " + bmi_str + ", for health reasons, I would urge you to lose some weight."
+      resultHash["suggestion2"]="Your BMI suggests you are obese. Please try and get your weight down a little. How about trying for  " + suggested_weight.to_s + " kilos."
+      resultHash["suggestion3"]="Your BMI is " + bmi_str + ", if you get your weight to " + deconstruct_bmi(30).to_s + " kilos, you will then just be classed as overweight. " 
     end
     resultHash["suggestedtargetweight"]=suggested_weight
 
@@ -288,7 +301,7 @@ class User < ActiveRecord::Base
     speechtext=" "
     input_req_today=false
     activity_req_today=false
-    weight_kg=self.latest_weight_kg
+    latest_weight=self.latest_weight
     last_input_entry=self.inputs.last.input_date      
     last_activity_entry=self.activities.last.activity_date
 
@@ -301,29 +314,31 @@ class User < ActiveRecord::Base
     end 
 
 
-    if dob==nil || gender==nil || height_cm==nil || weight_kg==nil || input_req_today || activity_req_today
-      if weight_kg==nil
+    if dob==nil || gender==nil || height_cm==nil || !latest_weight || input_req_today || activity_req_today
+      if !latest_weight
         speechtext += ", I need your weight in kilograms to calculate your daily BMR. Please say add height. "
-      elsif input_req_today
-        speechtext += ", You haven't recorded any food or drinks today. Please say add food. "
-      elsif activity_req_today
-        speechtext += ", You haven't recorded any activities today. Please say add activity. "
       elsif height_cm==nil
         speechtext += ", I need your height in centimetres to calculate your daily BMR. Please say add height. "
       elsif gender==nil || gender==""
         speechtext += ", I need your physical gender to calculate your BMR. Please say add gender. "
       elsif dob==nil
         speechtext += ", I need to know how old you are to calculate your BMR. Please say add age. "
-      end
+      elsif input_req_today
+        speechtext += ", You haven't recorded any food or drinks today. Please say add food. "
+      elsif activity_req_today
+        speechtext += ", You haven't recorded any activities today. Please say add activity. "
+      elsif latest_weight.weight_date > Date.current-7
+        speechtext += ", You haven't recorded your weight for a while. Please say add weight. "
+      end 
     else 
       # All has been entered ... so now onto the insights
       bmiHash=self.bmi_range
-      speechtext = bmiHash["suggestion"]
-      speechtext += " .  What would you like to do ? "
+      speechtext = [bmiHash["suggestion1"],bmiHash["suggestion2"],bmiHash["suggestion3"],"",""].sample
+      speechtext += " What would you like to do ? "
     end
 
     returnHash = { salutation:salutation,
-                  speechcongrats:"",
+                  speechcongrats:["Well done","Awesome", "Good job", "Amazing", "Woop woop"].sample,
                   speechtext:speechtext}
 
     returnHash
