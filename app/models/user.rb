@@ -299,20 +299,23 @@ class User < ActiveRecord::Base
 
     salutation = "Hello " + self.name
     speechtext=" "
-    input_req_today=false
-    activity_req_today=false
+    input_req_today=true
+    activity_req_today=true
     latest_weight=self.latest_weight
-    last_input_entry=self.inputs.last.input_date      
-    last_activity_entry=self.activities.last.activity_date
+    last_input_entry=self.inputs.last      
+    last_activity_entry=self.activities.last
 
-    if last_input_entry<Date.current || last_input_entry==nil
-      input_req_today=true
+    if last_input_entry
+      if last_input_entry.input_date>=Date.current
+        input_req_today=false
+      end
     end 
 
-    if last_activity_entry<Date.current || last_activity_entry==nil
-      activity_req_today=true
-    end 
-
+    if last_activity_entry
+      if last_activity_entry.activity_date>=Date.current
+        activity_req_today=false
+      end 
+    end
 
     if dob==nil || gender==nil || height_cm==nil || !latest_weight || input_req_today || activity_req_today
       if !latest_weight
@@ -334,7 +337,7 @@ class User < ActiveRecord::Base
       # All has been entered ... so now onto the insights
       bmiHash=self.bmi_range
       speechtext = [bmiHash["suggestion1"],bmiHash["suggestion2"],bmiHash["suggestion3"],"",""].sample
-      speechtext += " What would you like to do ? "
+      speechtext += " , What would you like to do ? "
     end
 
     returnHash = { salutation:salutation,
