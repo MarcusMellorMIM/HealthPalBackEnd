@@ -1,5 +1,5 @@
 class ActivityDetail < ActiveRecord::Base
   belongs_to :activity
-  has_many :users, through: :activity
-  has_many :activity_types, through: :activity
+  has_one :user, through: :activity
+  has_one :activity_type, through: :activity
 end
