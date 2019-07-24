@@ -16,7 +16,6 @@
 
 user = User.all.first 
 user.weights.destroy_all
-user.input_details.destroy_all
 user.inputs.destroy_all
-user.activity_details.destroy_all
 user.activities.destroy_all
+# Need to do something with input_details and activity_details
