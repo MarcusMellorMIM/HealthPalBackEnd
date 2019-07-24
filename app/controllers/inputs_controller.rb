@@ -12,9 +12,18 @@ class InputsController < ApplicationController
     def show
         user = current_user
         if user
-            input = user.inputs.find(params[:id])
-            render json: input, except: [:created_at],
-                include: [ :input_details ]
+            if params[:id]=='last'
+                input = user.inputs.all.last
+            else 
+                input = user.inputs.find(params[:id])
+            end
+            if input
+                hash = input.getinteractivespeech
+                input_hash=hash.merge(input.attributes)
+                input_hash=input_hash.merge({ input_details:input.input_details.map {|id| id.attributes }})
+
+                render json: input_hash
+            end
         end
     end
 
@@ -58,7 +67,6 @@ class InputsController < ApplicationController
         end
     end
 
-
     def destroy
         user = current_user
         if user
@@ -67,16 +75,17 @@ class InputsController < ApplicationController
             else 
                 input = user.inputs.find(params[:id]);
             end 
-            if input 
-                result = {detail:input.detail,
-                        calories:input.calories }
+
+            if input
+                input_hash=(input.attributes)
                 input.input_details.destroy;
                 input.destroy;
-            else
-                result = {detail:"",
-                    calories:0 }
-            end 
-            render json: result
+                hash = user.getinteractivespeech
+                input_hash=input_hash.merge(hash)
+
+                render json: input_hash
+            end
+
         end
     end
     
