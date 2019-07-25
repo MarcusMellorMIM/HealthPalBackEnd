@@ -13,11 +13,18 @@ class ActivitiesController < ApplicationController
     def show
         user = current_user
         if user
-            activity = user.activity.find(params[:id])
+            if params[:id]=='last'
+                activity = user.activities.all.last
+            else 
+                activity = user.activities.find(params[:id])
+            end
+            if activity
+                hash = activity.getinteractivespeech
+                activity_hash=hash.merge(activity.attributes)
+                activity_hash=activity_hash.merge({ activity_details:activity.activity_details.map {|ad| ad.attributes }})
 
-            render json: activity, except: [:created_at],
-                    include: [ :activity_details ]
-
+                render json: activity_hash
+            end
         end
     end
 
@@ -65,16 +72,16 @@ class ActivitiesController < ApplicationController
             else 
                 activity = user.activities.find(params[:id]);
             end
+
             if activity
-                result = {detail:activity.detail,
-                        calories:activity.calories }
-                activity.activity_details.destroy_all;
+                activity_hash=(activity.attributes)
+                activity.activity_details.destroy;
                 activity.destroy;
-            else
-                result = {detail:"",
-                    calories:0 }
-            end 
-            render json: result
+                hash = user.getinteractivespeech
+                activity_hash=activity_hash.merge(hash)
+
+                render json: activity_hash
+            end
         end
     end
     
