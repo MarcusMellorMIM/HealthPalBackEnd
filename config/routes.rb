@@ -13,5 +13,5 @@ Rails.application.routes.draw do
   get "/auth/show", to: "auth#show"
 
   post "/api/input", to: "api#input", as: "apiinput"
-  # post "/api/exercise", to: "api#exercise", as: "apiexercise"
+  post "/api/activity", to: "api#activity", as: "apiactivity"
 end
