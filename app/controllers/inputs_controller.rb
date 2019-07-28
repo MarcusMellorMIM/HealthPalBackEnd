@@ -53,7 +53,7 @@ class InputsController < ApplicationController
                 api= Nutritionixapi.new
                 input_details=api.get_inputinfo(detail)    
             else
-                input_details = params[:detail][:input_detail]
+                input_details = params[:detail][:input_details]
             end
 
             # Get a helpful hint
@@ -126,19 +126,25 @@ private
     # I want the total calories rendered in the input object ... the only way 
     # I can figure out how to do this at the moment, is to save in the db
     # If I can resolve the render ... I can get rid of this, and just use helpers
-        calories=0
-        input_details.map { |f|
-            calories+=(f[:serving_qty].to_f * f[:unit_calories].to_f).to_i
-            inputdetail=InputDetail.create(
-                input_id:input.id,
-                name:f[:name],
-                unit_calories:f[:unit_calories],           
-                serving_unit:f[:serving_unit],
-                serving_qty:f[:serving_qty],
-                unit_grams:f[:unit_grams],
-                photo_thumb:f[:photo_thumb]
-            )
-        }
+
+    calories=0
+        # Just in case something goes wrong .. this prevents a crash
+        if input_details.kind_of?(Array) 
+
+            input_details.map { |f|
+                calories+=(f[:serving_qty].to_f * f[:unit_calories].to_f).to_i
+                inputdetail=InputDetail.create(
+                    input_id:input.id,
+                    name:f[:name],
+                    unit_calories:f[:unit_calories],           
+                    serving_unit:f[:serving_unit],
+                    serving_qty:f[:serving_qty],
+                    unit_grams:f[:unit_grams],
+                    photo_thumb:f[:photo_thumb]
+                )
+            }
+
+        end
 
         input.reload
         input.update(calories:calories)
