@@ -282,7 +282,7 @@ class User < ActiveRecord::Base
     end
     
     if input>0 && activity>0
-      speechtext = speechtext + " Well done using Floe, your health pal, maybe consider adding a goal !!!"
+      speechtext = speechtext + " Well done using Eva, your health pal, maybe consider adding a goal !!!"
     else  
       speechtext = speechtext + " To get the best out of me, please do make sure you use me every day." 
     end
@@ -299,6 +299,8 @@ class User < ActiveRecord::Base
 
     salutation = "Hello " + self.name
     speechtext=" "
+    screentext=""
+    navlink=""
     input_req_today=true
     activity_req_today=true
     latest_weight=self.latest_weight
@@ -320,29 +322,46 @@ class User < ActiveRecord::Base
     if dob==nil || gender==nil || height_cm==nil || !latest_weight || input_req_today || activity_req_today
       if !latest_weight
         speechtext += ", I need your weight in kilograms to calculate your daily BMR. Please say add weight. "
+        screentext = "I need your weight in kilograms to calculate your daily BMR. Please enter your latest weight to get the most out of your health pal. Click on smart navigation to help you on your way."
+        navlink="Weight"
       elsif height_cm==nil
         speechtext += ", I need your height in centimetres to calculate your daily BMR. Please say add height. "
+        screentext = "I need your height in centimetres to calculate your daily BMR. Please enter your height to get the most out of your healthg pal.  Click on smart navigation to get to where you need to be."
+        navlink="Account"
       elsif gender==nil || gender==""
         speechtext += ", I need your physical gender to calculate your BMR. Please say add gender. "
+        screentext = "I need your physical gender to calculate your BMR. Please add your gender to get the most out of your health pal.  Click on smart navigation to open the right page."
+        navlink="Account"
       elsif dob==nil
         speechtext += ", I need to know how old you are to calculate your BMR. Please say add age. "
+        screentext = "I need to know how old you are to calculate your BMR. Please add your age to get the most out of your health pal.  Click on smart navigation to show how many years young you are."
+        navlink="Account"
       elsif input_req_today
         speechtext += ", You haven't recorded any food or drinks today. Please say add food. "
+        screentext = "You haven't recorded any food or drinks today. Please record food and/or drinks to get the most out of your health pal.  Click on smart navigation to record those calories."
+        navlink="Input"
       elsif activity_req_today
         speechtext += ", You haven't recorded any activities today. Please say add activity. "
+        screentext = "You haven't recorded any activities today. Please record all of your activities as they happen, to get the most out of your health pal.  Click on smart navigation to store your activities."
+        navlink="Activity"
       elsif latest_weight.weight_date > Date.current-7
         speechtext += ", You haven't recorded your weight for a while. Please say add weight. "
+        screentext = "You haven't recorded your weight for a while. Please add your latest weight so we can make sure your daily calory burn is accurate.  Click on smart navigation to record your weight."
+        navlink="Weight"
       end 
     else 
       # All has been entered ... so now onto the insights
       bmiHash=self.bmi_range
       speechtext = [bmiHash["suggestion1"],bmiHash["suggestion2"],bmiHash["suggestion3"],"",""].sample
       speechtext += " , What would you like to do ? "
+      screentext = [bmiHash["suggestion1"],bmiHash["suggestion2"],bmiHash["suggestion3"],"",""].sample
     end
 
     returnHash = { salutation:salutation,
                   speechcongrats:["Well done","Awesome", "Good job", "Amazing", "Woop woop"].sample,
-                  speechtext:speechtext}
+                  speechtext:speechtext,
+                  screentext:screentext,
+                  navlink:navlink}
 
     returnHash
 
