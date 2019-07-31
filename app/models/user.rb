@@ -282,7 +282,7 @@ class User < ActiveRecord::Base
     end
     
     if input>0 && activity>0
-      speechtext = speechtext + " Well done using Eva, your health pal, maybe consider adding a goal !!!"
+      speechtext = speechtext + " Well done using Eva, your health pal. "
     else  
       speechtext = speechtext + " To get the best out of me, please do make sure you use me every day." 
     end
