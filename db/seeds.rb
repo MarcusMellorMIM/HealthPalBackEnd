@@ -13,9 +13,15 @@
 # InputType.create(detail:'meh')
 # InputType.create(detail:'guilty')
 
+# user = User.all.first
+# user.weights.destroy_all
+# user.inputs.destroy_all
+# user.activities.destroy_all
 
-user = User.all.first 
-user.weights.destroy_all
-user.inputs.destroy_all
-user.activities.destroy_all
+# Weight.all.destroy_all
+# Input.all.destroy_all
+# Activity.all.destroy_all
+# InputDetail.destroy_all 
+# ActivityDetail.destroy_all
+
 # Need to do something with input_details and activity_details

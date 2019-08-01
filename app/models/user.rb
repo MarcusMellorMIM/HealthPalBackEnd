@@ -352,9 +352,9 @@ class User < ActiveRecord::Base
     else 
       # All has been entered ... so now onto the insights
       bmiHash=self.bmi_range
-      speechtext = [bmiHash["suggestion1"],bmiHash["suggestion2"],bmiHash["suggestion3"],"",""].sample
+      speechtext = [bmiHash["suggestion1"],bmiHash["suggestion2"],bmiHash["suggestion3"]," don't forget to say HELP as a reminder of all you can do with me. ",", don't forget to say goodbye when you are done",""].sample
       speechtext += " , What would you like to do ? "
-      screentext = [bmiHash["suggestion1"],bmiHash["suggestion2"],bmiHash["suggestion3"],"",""].sample
+      screentext = [bmiHash["suggestion1"],bmiHash["suggestion2"],bmiHash["suggestion3"]].sample
     end
 
     returnHash = { salutation:salutation,
