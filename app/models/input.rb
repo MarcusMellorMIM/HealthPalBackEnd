@@ -6,7 +6,7 @@ class Input < ActiveRecord::Base
   def total_calories 
     self.input_details.sum { |input| 
       input.serving_qty * input.unit_calories
-    }
+    }.to_i
   end
 
   def getinteractivespeech
