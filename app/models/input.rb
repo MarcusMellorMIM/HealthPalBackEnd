@@ -20,10 +20,12 @@ class Input < ActiveRecord::Base
     activity = self.user.activitydiarycalories( searchdate )
     deficit = (input - bmr - activity).ceil(0)
 
+    speechtext = ", you have added " + self.detail + " to your diary totalling " + self.total_calories.to_s + " calories. "
+
     if deficit < 0
-      speechtext = "you can eat or drink " + (0-deficit).to_s + " more calories, and maintain your weight. "
+      speechtext += "you can eat or drink " + (0-deficit).to_s + " more calories, and maintain your weight. "
     else
-      speechtext = "you have eaten " + deficit.to_s + " more than you should have, if you want to maintain your weight. "
+      speechtext += "you have eaten " + deficit.to_s + " more than you should have, if you want to maintain your weight. "
     end
 
     speechHash = self.user.getinteractivespeech
