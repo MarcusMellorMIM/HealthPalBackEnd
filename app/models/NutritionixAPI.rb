@@ -86,6 +86,7 @@ class Nutritionixapi
     returnArray=[]
     returnJSON = JSON.parse(res.body)["exercises"]
 
+    
     if returnJSON.length>0
       returnArray = returnJSON.map { |a|
         activityHash={}
@@ -95,13 +96,13 @@ class Nutritionixapi
         activityHash[:photo_thumb]=a["photo"]["thumb"]
         activityHash
       }
-    else 
-      activityHash={}
-      activityHash[:name]="DEFAULT: " + detail
-      activityHash[:unit_calories]= 0           
-      activityHash[:duration_min]=0
-      activityHash[:photo_thumb]=""
-      returnArray << activityHash
+    # else 
+    #   activityHash={}
+    #   activityHash[:name]="DEFAULT: " + detail
+    #   activityHash[:unit_calories]= 0           
+    #   activityHash[:duration_min]=0
+    #   activityHash[:photo_thumb]=""
+    #   returnArray << activityHash
     end
 
     returnArray

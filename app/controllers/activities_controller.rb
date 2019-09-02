@@ -40,12 +40,6 @@ class ActivitiesController < ApplicationController
                 activity_type_id=1
             end
 
-            # Create the Activity
-            activity = Activity.create(user_id:user.id, 
-                                    detail:detail, 
-                                    activity_type_id:activity_type_id, 
-                                    activity_date:activity_date )
-
             # Now create the meal detail records from the super huuuuge hash depending on whether from 
             # website app or some other device which will not have seperated the process
             if params[:detail][:alexa]
@@ -55,11 +49,27 @@ class ActivitiesController < ApplicationController
                 activity_details = params[:detail][:activity_details]
             end
 
-            create_activitydetails( activity, activity_details )
-            hash = activity.getinteractivespeech
-            activity_hash=hash.merge(activity.attributes)
-            activity_hash=activity_hash.merge({ activity_details:activity.activity_details.map {|ad| ad.attributes }})
+
+            # Create the Activity
+            if activity_details.length>0
+                activity = Activity.create(user_id:user.id, 
+                    detail:detail, 
+                    activity_type_id:activity_type_id, 
+                    activity_date:activity_date )
+                # create the meal details
+                create_activitydetails( activity, activity_details )
+                hash = activity.getinteractivespeech
+                activity_hash=hash.merge(activity.attributes)
+                activity_hash=activity_hash.merge({ activity_details:activity.activity_details.map {|ad| ad.attributes }})
+            else
+                activity_hash = { salutation:"",
+                    speechcongrats:"Oh dear,",
+                    speechtext:"I could not calculate the calories for " + detail + ", please try again, by saying add activity "
+                }
+            end    
+
             render json: activity_hash            
+    
         end
     end
 

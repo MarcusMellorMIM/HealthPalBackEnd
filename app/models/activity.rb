@@ -13,15 +13,17 @@ class Activity < ActiveRecord::Base
     activity = self.user.activitydiarycalories( searchdate )
     activity_rate = activity.to_f / bmr.to_f
 
+    speechtext = ", you have added " + self.detail + " to your activity diary totalling " + self.calories.to_s + " calories. "
+
     if activity_rate < 0.2
       speechcongrats = ["Well done", "Good job"].sample      
-      speechtext = "this is a good start, but I know you can do more. At the moment I would class this as a light activity day "
+      speechtext += " This is a good start, but I know you can do more. At the moment I would class this as a light activity day "
     elsif activity_rate < 0.5
       speechcongrats = ["Brilliant", "Superb"].sample      
-      speechtext = "this is becoming a good day for moving about. "
+      speechtext += " This is becoming a good day for moving about. "
     else
       speechcongrats = ["Amazing", "Awesome"].sample
-      speechtext = "phew, this is an extra active day. "
+      speechtext += " Phew, this is an extra active day. "
     end
 
     speechtext += self.user.getinteractivespeech[:speechtext]
