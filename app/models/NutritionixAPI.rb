@@ -28,7 +28,10 @@ class Nutritionixapi
     # we need to manipuate the return data to be what we need, with appropriate names
     returnArray=[]
     returnJSON = JSON.parse(res.body)["foods"]
-    if returnJSON.length>0
+
+
+#    if returnJSON.length>0
+    if returnJSON
       returnArray = returnJSON.map {|food|
         foodHash = {}
         foodHash[:name]=food["food_name"]
@@ -41,18 +44,18 @@ class Nutritionixapi
         foodHash[:serving_qty] = food["serving_qty"]
         foodHash
       }
-    else 
-      # Sometimes the interface does not find anything ... in which case, do this to prevent errors
-      foodHash = {}
-      foodHash[:name]="DEFAULT: " + detail,
-      foodHash[:unit_calories] = 0
-      foodHash[:serving_unit] = ""
-      foodHash[:unit_grams] = 0
-      foodHash[:photo_thumb] = ""
-      foodHash[:nf_calories] = 0
-      foodHash[:serving_weight_grams] = 0
-      foodHash[:serving_qty] = 0
-      returnArray << foodHash
+    # else 
+    #   # Sometimes the interface does not find anything ... in which case, do this to prevent errors
+    #   foodHash = {}
+    #   foodHash[:name]="DEFAULT: " + detail,
+    #   foodHash[:unit_calories] = 0
+    #   foodHash[:serving_unit] = ""
+    #   foodHash[:unit_grams] = 0
+    #   foodHash[:photo_thumb] = ""
+    #   foodHash[:nf_calories] = 0
+    #   foodHash[:serving_weight_grams] = 0
+    #   foodHash[:serving_qty] = 0
+    #   returnArray << foodHash
     end
 
     returnArray

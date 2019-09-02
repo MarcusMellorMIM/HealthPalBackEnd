@@ -41,13 +41,7 @@ class InputsController < ApplicationController
                 input_type_id=1
             end
 
-            # Create the meal
-            input = Input.create(user_id:user.id, 
-                                detail:detail, 
-                                input_type_id:input_type_id, 
-                                input_date:input_date )
-
-            # Now create the meal detail records from the super huuuuge hash depending on whether from 
+            # Now get the meal detail records from the super huuuuge hash depending on whether from 
             # website app or some other device which will not have seperated the process
             if params[:detail][:alexa]
                 api= Nutritionixapi.new
@@ -56,13 +50,29 @@ class InputsController < ApplicationController
                 input_details = params[:detail][:input_details]
             end
 
-            # Get a helpful hint
-            create_inputdetails( input, input_details )
-            hash = input.getinteractivespeech
-            input_hash=hash.merge(input.attributes)
-            input_hash=input_hash.merge({ input_details:input.input_details.map {|id| id.attributes }})
-
+            # Now create the meal and associated details
+            if input_details.length>0
+                # Create the meal
+                input = Input.create(user_id:user.id, 
+                    detail:detail, 
+                    input_type_id:input_type_id, 
+                    input_date:input_date )
+                # Create the meal details
+                create_inputdetails( input, input_details )
+                hash = input.getinteractivespeech
+                input_hash=hash.merge(input.attributes)
+                input_hash=input_hash.merge({ input_details:input.input_details.map {|id| id.attributes }})
+                
+            else
+                input_hash = { salutation:"",
+                    speechcongrats:"Oh dear,",
+                    speechtext:"I could not calculate the calories for " + detail + ", please try again, by saying add meal "
+                }      
+            end
+                        
             render json: input_hash
+
+
 
         end
     end
