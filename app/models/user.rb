@@ -73,8 +73,8 @@ class User < ActiveRecord::Base
       suggested_weight=deconstruct_bmi( bmi * 0.9 );
       resultHash["range"]="Obese"
       resultHash["suggestion1"]="Your BMI is " + bmi_str + ", for health reasons, I would urge you to lose some weight."
-      resultHash["suggestion2"]="Your BMI suggests you are obese. Please try and get your weight down a little. How about trying for  " + suggested_weight.to_s + " kilos."
-      resultHash["suggestion3"]="Your BMI is " + bmi_str + ", if you get your weight to " + deconstruct_bmi(30).to_s + " kilos, you will then just be classed as overweight. " 
+      resultHash["suggestion2"]="Your BMI suggests you are overweight. Please try and get your weight down a little. How about trying for  " + suggested_weight.to_s + " kilos."
+      resultHash["suggestion3"]="Your BMI is " + bmi_str + ", if you get your weight to " + deconstruct_bmi(30).to_s + " kilos, you will then be well on your way to reducing your increased health risks. " 
     end
     resultHash["suggestedtargetweight"]=suggested_weight
 
@@ -107,7 +107,7 @@ class User < ActiveRecord::Base
           bmr=(655.1 + (9.563 * weight_kg)+(1.85 * height_cm)-(4.676 * age)).round(2)
       end
     end
-    bmr
+    bmr.to_i
   end
 
   def inputdiary( date= Date.current )
@@ -219,8 +219,8 @@ class User < ActiveRecord::Base
       input = inputdiarycalories( searchdate )
       activity = activitydiarycalories( searchdate )
       deficit = input - bmr - activity
-      insight = getinsight(date,bmr,input,activity,deficit)
-      speechtext = getspeechtext(date,bmr,input,activity,deficit)
+      # insight = getinsight(date,bmr,input,activity,deficit)
+      speechtext = getspeechtext(searchdate,bmr,input,activity,deficit)
 
       if searchdate==Date.current
         bmr = (bmr * (Time.current.strftime("%H").to_f / 24.0 ).to_f).ceil(1)
@@ -232,7 +232,7 @@ class User < ActiveRecord::Base
         :input => input,
         :activity => activity,
         :deficit => deficit,
-        :insight => insight,
+        # :insight => insight,
         :speechtext => speechtext
       }
       returnarray << summaryhash
@@ -243,44 +243,90 @@ class User < ActiveRecord::Base
 
   end
 
-  def getinsight( date,bmr,input,activity,deficit )
-    # Will return a bit of insight into what is going on with you
-    # This should look at historical data, do stsatistical analysis etc
-    # Possibly extend the use of the API to get recommended calorie intakes
-    # For now, will be pretty basic
+  # def getinsight( date,bmr,input,activity,deficit )
+  #   # Will return a bit of insight into what is going on with you
+  #   # This should look at historical data, do stsatistical analysis etc
+  #   # Possibly extend the use of the API to get recommended calorie intakes
+  #   # For now, will be pretty basic
 
-    if bmr == 0
-      insight = "Data issue, please check age, sex and weight is recorded. "
-    elsif input == 0 && activity == 0
-      insight = "Please add an activity and some food to get an insight. "
-    elsif deficit > (bmr*0.2)
-      insight = "Phew, you sure are eating, maybe slow down a little. "
-    elsif deficit > (bmr*0.1)
-      insight = "Not too bad, but either eat less, or exercise more. "
-    elsif deficit > (0-(bmr*0.1))
-      insight = "You are keeping it steady, well done. "
-    elsif deficit > (0-(bmr*0.2))
-      insight = "You must be feeling hungry, maybe eat a little more. "
-    else
-      insight = "Are you a monk on bread and water ? please eat ! "
-    end
-  end
+  #   if bmr == 0
+  #     insight = "Please check age, sex and weight is recorded so I can calculate your daily calorie requirement. "
+  #   elsif input == 0 && activity == 0
+  #     insight = "Please add an activity and some food to get an insight. "
+  #   elsif deficit > (bmr*0.2)
+  #     insight = "Phew, you sure are eating, maybe slow down a little. "
+  #   elsif deficit > (bmr*0.1)
+  #     insight = "Not too bad, but either eat less, or exercise more. "
+  #   elsif deficit > (0-(bmr*0.1))
+  #     insight = "You are keeping it steady, well done. "
+  #   elsif deficit > (0-(bmr*0.2))
+  #     insight = "You must be feeling hungry, maybe eat a little more. "
+  #   else
+  #     insight = "Are you a monk on bread and water ? please eat ! "
+  #   end
+  # end
 
   def getspeechtext( date,bmr,input,activity,deficit )
     # Will return a written version of the calory calculation
 
-    if input == 0 
-      speechtext = "You have not recorded any food or drinks. "
+    speechtext="";
+    today=false;
+    is_was="was";
+    have_did="did";
+    record_ed="record";
+
+    today = false; 
+
+    if date == Date.current
+      speechtext="Today, ";
+      today=true;
+      is_was="is";
+      have_did="have"
+      record_ed="recorded"
+    elsif date == Date.current - 1 
+      speechtext="Yesterday, "
+    elsif date == Date.current - 7
+      speechtext="Last week, "
     else
-      speechtext = "Your intake was " + input.to_s + " calories. " 
+      #Will say the day
+      speechtext = "On " + date.strftime("%A") + ", "  
     end
 
-    if activity == 0 
-      speechtext = speechtext + "You have not recorded any activities. "
-    else  
-      speechtext = speechtext + "You burnt " + activity.to_s + " calories. "
+    if bmr > 0 
+        speechtext += "Your resting calorie requirement " + is_was + " " + bmr.to_s + " calories. "
+    end 
+
+    if input == 0 && activity == 0
+      speechtext = speechtext + "You " + have_did + " not " + record_ed + " any food, drinks or activities. "
     end
-    
+
+    if input == 0 && activity != 0
+      speechtext = speechtext + "You " + have_did + " not " + record_ed + " any food or drinks. "
+    elsif input != 0
+      speechtext = speechtext + "Your food and drink intake " + is_was + " " + input.to_s + " calories. " 
+    end
+
+    if activity == 0 && input != 0
+      speechtext = speechtext + "You " + have_did + " not " + record_ed + " any activities. "
+    elsif activity != 0
+      speechtext = speechtext + "You burnt " + activity.to_s + " calories through exercise. "
+    end
+
+
+    if (deficit > (bmr*0.05)) && (input > 0 || activity > 0)
+        if today 
+          speechtext = speechtext + "You need to burn off " + deficit.to_s + " calories, if you want to maintain your current weight. "
+        else
+          speechtext = speechtext + "Your intake was " + deficit.to_s + " calories greater than you needed, possibly leading to weight gain."
+        end 
+    elsif (deficit < (0-(bmr*0.05))) && (input > 0 || activity > 0)
+        if today 
+          speechtext = speechtext + "You can eat or drink " + (0-deficit).to_s + " calories more, and maintain your current weight."
+        else   
+          speechtext = speechtext + "You burnt " + (0-deficit).to_s + " calories more than you needed, possibly leading to weight loss. "
+        end 
+    end
+
     if input>0 && activity>0
       speechtext = speechtext + " Well done using Eva, your health pal. "
     else  
@@ -344,7 +390,7 @@ class User < ActiveRecord::Base
         speechtext += ", You haven't recorded any activities today. Please say add activity. "
         screentext = "You haven't recorded any activities today. Please record all of your activities as they happen, to get the most out of your health pal.  Click on smart navigation to store your activities."
         navlink="Activity"
-      elsif latest_weight.weight_date > Date.current-7
+      elsif latest_weight.weight_date < Date.current-7
         speechtext += ", You haven't recorded your weight for a while. Please say add weight. "
         screentext = "You haven't recorded your weight for a while. Please add your latest weight so we can make sure your daily calory burn is accurate.  Click on smart navigation to record your weight."
         navlink="Weight"

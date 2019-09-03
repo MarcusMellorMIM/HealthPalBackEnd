@@ -19,10 +19,12 @@ class UsersController < ApplicationController
 
     def summary 
         user = current_user
-        start_date=request.headers["startDate"]
-        end_date=request.headers["startDate"]
+        start_date=request.headers["startDate"].to_date
+        end_date=request.headers["endDate"].to_date
+        iterations = (end_date - start_date).to_i + 1
+
         if user
-            render json: user.caloriesummary
+            render json: user.caloriesummary(start_date, iterations)
         end 
     end
 
